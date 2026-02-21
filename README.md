@@ -1,2 +1,2 @@
 # ERP-Bussiness
-Sistema de Facturacion, Inventario y revision de costos.
+Sistema de modular de facturacion, costos e inventario.
