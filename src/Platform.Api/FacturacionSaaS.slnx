@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="Modules.Billing/Modules.Billing.csproj" />
+  <Project Path="Modules.EInvoicing/Modules.EInvoicing.csproj" />
+  <Project Path="Modules.Inventory/Modules.Inventory.csproj" />
+  <Project Path="Modules.Metrics/Modules.Metrics.csproj" />
+  <Project Path="Modules.Quotes/Modules.Quotes.csproj" />
+  <Project Path="Modules.Reporting/Modules.Reporting.csproj" />
+  <Project Path="Platform.Api/Platform.Api.csproj" />
+  <Project Path="Platform.Core/Platform.Core.csproj" />
+  <Project Path="Platform.Worker/Platform.Worker.csproj" />
+</Solution>
