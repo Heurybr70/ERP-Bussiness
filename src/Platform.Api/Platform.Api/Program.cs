@@ -1,8 +1,9 @@
-using Serilog;
-using Serilog.Events;
-using Serilog.Context;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
+using Platform.Core.Configuration;
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -22,7 +23,6 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 builder.Services.AddProblemDetails(options =>
 {
     // Ocultar detalles técnicos en prod
@@ -47,6 +47,14 @@ builder.Services.AddProblemDetails(options =>
         }
     };
 });
+
+builder.Services.AddOptions<DgiiOptions>()
+    .Bind(builder.Configuration.GetSection("DGII"))
+    .ValidateDataAnnotations()
+    .Validate(o => !string.IsNullOrWhiteSpace(o.AuthBaseUrl), "DGII:AuthBaseUrl es requerido")
+    .ValidateOnStart();
+
+builder.Services.Configure<DgiiOptions>(builder.Configuration.GetSection("DGII"));
 
 var app = builder.Build();
 

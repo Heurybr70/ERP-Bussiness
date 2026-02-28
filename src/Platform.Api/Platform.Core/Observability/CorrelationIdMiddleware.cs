@@ -4,11 +4,9 @@ using Serilog.Context;
 
 namespace Platform.Core.Observability;
 
-public sealed class CorrelationIdMiddleware
+public sealed class CorrelationIdMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public CorrelationIdMiddleware(RequestDelegate next) => _next = next;
+    private readonly RequestDelegate _next = next;
 
     public async Task InvokeAsync(HttpContext context)
     {
