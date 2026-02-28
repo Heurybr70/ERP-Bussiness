@@ -1,8 +1,11 @@
+using Platform.Core.Configuration;
 using Platform.Worker;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
 using Serilog.Events;
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -13,9 +16,8 @@ Log.Logger = new LoggerConfiguration()
 var correlationId = Guid.NewGuid().ToString("N");
 using (LogContext.PushProperty("CorrelationId", correlationId))
 {
-    _logger.LogInformation("Procesando job...");
+    Log.Information("Procesando job...");
 }
-
 
 try
 {
@@ -27,9 +29,21 @@ try
         .Enrich.FromLogContext()
         .WriteTo.Console());
 
-    
-
     builder.Services.AddHostedService<Worker>();
+
+    builder.Services.AddOptions<DgiiOptions>()
+    .Bind(builder.Configuration.GetSection("DGII"))
+    .ValidateDataAnnotations()
+    .Validate(o => !string.IsNullOrWhiteSpace(o.AuthBaseUrl), "DGII:AuthBaseUrl es requerido")
+    .ValidateOnStart();
+
+    builder.Services.Configure<DgiiOptions>(builder.Configuration.GetSection("DGII"));
+
+    var keyVaultUri = builder.Configuration["KeyVault:VaultUri"];
+    if (!string.IsNullOrWhiteSpace(keyVaultUri))
+    {
+        builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+    }
 
     var host = builder.Build();
     host.Run();
